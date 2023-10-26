@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+  {% block title %}
+    Nueva Persona
+  {% endblock title %}
+    
+  {% block content %}
+  <h2>Formulario Alta</h2>
+  <div class="card" style="width: 18rem;">
+    <div class=card-header>Datos </div>
+    
+    <form method='POST' align=center enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <table>
+          {{ formpersona | crispy }}
+        </table>
+        <button type=sumbit>Guardar</button>
+    
+      </form>
+      {% if form.errors %}
+      <div class="error-messages">
+          <ul>
+              {% for field, errors in form.errors.items %}
+              <li>{{ field }}:
+                  <ul>
+                      {% for error in errors %}
+                      <li>{{ error }}</li>
+                      {% endfor %}
+                  </ul>
+              </li>
+              {% endfor %}
+          </ul>
+      </div>
+      {% endif %}
+  </div>
+  {% endblock %}

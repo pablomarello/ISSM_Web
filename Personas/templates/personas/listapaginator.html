@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+  {% block title %}
+    Nueva Persona
+  {% endblock title %}
+    
+  {% block content %}
+  <div class="jumbotron jumbotron-fluid">
+    <div class="container">
+      <h1 class="display-4">Listado de personas</h1>
+      <!-- It will show the total personas count -->
+      <p class="lead">Total de personas: {{ personas.paginator.count }}</p>
+    </div>
+  </div>
+<div class="container">
+    <table class="table">
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col">Dni</th>
+          <th scope="col">Apellido</th>
+          <th scope="col">Nombre</th>
+          <th scope="col">Vive</th>
+          <th scope="col">Estado Civil</th>
+          <th scope="col">Email</th>
+          <th scope="col">Foto</th>
+          <th scope="col">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for per in personas %}
+            <tr>
+                <th scope="row">{{per.dni}}</th>
+                <td>{{per.apellido}}</td>
+                <td>{{per.nombre}}</td>
+                <td>{{per.vive}}</td>
+                <td>{{per.estado_civil}}</td>
+                <td>{{per.email}}</td>
+                <td VALIGN="middle">
+                  {% if per.foto %}
+                  <div class="row-picture">
+                 
+                  <img class="circle" src="{{ per.foto.url }}" alt="{{ per.nombre }}"
+                  width="80" height="80">
+                  <br>
+                  </div>
+                  {% endif %}
+                  </td>
+                <td>
+                  
+                  <a class="nav-link" href="{% url 'editar' per.id %}" tabindex="-1" >Editar</a>
+                  <a class="nav-link" href="{% url 'email_comprobante' per.id %}" tabindex="-1" >Email PDF</a>
+              </form>
+              <form method="POST" action="{% url 'eliminar' per.id %}" enctype="multipart/form-data">
+                {% csrf_token %}
+        
+                {{formPersona.as_table}}
+                <button type="submit" class="btn btn-danger btn-sm" title="Eliminacion directa de la persona">Eliminar</button>
+            </form> 
+            </td>
+                
+              </tr>
+            {% endfor %}
+        </tbody>
+      </table>
+
+      <!-- pagination starts -->
+      <nav aria-label="...">
+        <ul class="pagination flex-wrap justify-content-center">
+          <li class="page-item disabled">
+            {% if personas.has_previous %}
+              <li class="page-item">
+                <a class="page-link" href="{{ request.path }}?page={{ personas.previous_page_number }}">⇇</a>
+              </li>
+            {% endif %}
+            {% if personas.number > 3 %}
+              <li class="page-item">
+                <a class="page-link" href="{{ request.path }}?page=1">1</a>
+              </li>
+            {% endif %}
+            {% if personas.number > 4 %}
+                <li class="page-item">
+                <span class="page-link">....</span>
+                </li>
+            {% endif %}
+          </li>
+
+          {% for i in personas.paginator.page_range %}
+            {% if personas.number == i %}
+              <li class="page-item active">
+                <span class="page-link">
+                  {{ i }}
+                  <span class="sr-only"></span>
+                </span>
+              </li>
+              {% elif i > personas.number|add:'-3' and i < personas.number|add:'3' %}
+                <li class="page-item">
+                  <a class="page-link" href="{{ request.path }}?page={{ i }}">{{ i }}</a>
+                </li>
+            {% endif %}
+          {% endfor %}
+
+          {% if personas.has_next %}
+            {% if personas.number < personas.paginator.num_pages|add:'-3' %}
+                <li class="page-item">
+                    <span class="page-link">....</span>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ personas.paginator.num_pages }}">{{ personas.paginator.num_pages }}</a>
+                </li>
+            {% elif personas.number < personas.paginator.num_pages|add:'-2' %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ personas.paginator.num_pages }}">{{ personas.paginator.num_pages }}</a>
+                </li>
+            {% endif %}  
+            <li class="page-item">
+              <a class="page-link" href="?page={{ personas.next_page_number }}"> ⇉</a>
+            </li>
+          {% endif %}
+        </ul>
+      </nav>
+      <!-- pagination end -->
+</div>
+
+  {% endblock %}
